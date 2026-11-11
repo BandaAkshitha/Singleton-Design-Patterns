@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singleton Pattern Demo</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: white;
+            padding: 15px;
+        }
+
+        .container {
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+            max-width: 750px;
+            background-color: black;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 16px;
+            border-radius: 25px;
+            border: 1px solid #555;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .log-box {
+            margin-top: 20px;
+            padding: 10px;
+            height: 230px;
+            overflow-y: auto;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .stat-box {
+            width: 50%;
+            color: #ccc;
+        }
+
+        .stat-box h2 {
+            color: white;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h3>Singleton Pattern Demo</h3>
+
+    <p><b>Singleton ensures only one instance exists.</b></p>
+
+    <button onclick="createLogger()">
+        Create Logger Instance
+    </button>
+
+    <button onclick="logMessage()">
+        Add Log Message
+    </button>
+
+    <div class="log-box" id="output"></div>
+
+    <!-- Statistics Section -->
+
+    <div class="stats">
+
+        <div class="stat-box">
+            Logger instances created
+            <h2 id="instanceCount">0</h2>
+        </div>
+
+        <div class="stat-box">
+            Log messages stored
+            <h2 id="messageCount">0</h2>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// =====================================
+// SINGLETON LOGGER IMPLEMENTATION
+// =====================================
+
+const Logger = (function () {
+
+    let instance;
+
+    function createInstance() {
+
+        const logs = [];
+
+        return {
+
+            addLog: function (msg) {
+
+                logs.push(msg);
+
+                displayLogs(logs);
+
+                updateStats(logs.length);
+            },
+
+            getLogs: function () {
+
+                return logs;
+
+            }
+
+        };
+
+    }
+
+    return {
+
+        getInstance: function () {
+
+            if (!instance) {
+
+                instance = createInstance();
+
+                displayOutput("New Logger instance created");
+
+                updateInstanceCount(1);
+
+            } else {
+
+                displayOutput("Using existing Logger instance");
+
+            }
+
+            return instance;
+
+        }
+
+    };
+
+})();
+
+
+// =====================================
+// DEMONSTRATION FUNCTIONS
+// =====================================
+
+let logger;
+
+let loggerInstances = 0;
+
+
+function createLogger() {
+
+    logger = Logger.getInstance();
+
+}
+
+
+// =====================================
+// ADD LOG MESSAGE
+// =====================================
+
+function logMessage() {
+
+    if (!logger) {
+
+        displayOutput(
+            "Please create a Logger instance first!"
+        );
+
+        return;
+
+    }
+
+    const msg = "Log entry at " +
+        new Date().toLocaleTimeString();
+
+    logger.addLog(msg);
+
+}
+
+
+// =====================================
+// DISPLAY LOG MESSAGES
+// =====================================
+
+function displayLogs(logs) {
+
+    const out = document.getElementById("output");
+
+    out.innerHTML = "";
+
+    const heading = document.createElement("b");
+
+    heading.textContent = "Logger Entries:";
+
+    out.appendChild(heading);
+
+    logs.forEach(function (msg) {
+
+        const entry = document.createElement("div");
+
+        entry.textContent = msg;
+
+        entry.style.marginTop = "8px";
+
+        out.appendChild(entry);
+
+    });
+
+}
+
+
+// =====================================
+// DISPLAY STATUS MESSAGES
+// =====================================
+
+function displayOutput(msg) {
+
+    const out = document.getElementById("output");
+
+    const message = document.createElement("div");
+
+    message.textContent = msg;
+
+    out.appendChild(message);
+
+}
+
+
+// =====================================
+// UPDATE LOGGER INSTANCE COUNTER
+// =====================================
+
+function updateInstanceCount(count) {
+
+    loggerInstances = count;
+
+    document.getElementById("instanceCount").textContent =
+        loggerInstances;
+
+}
+
+
+// =====================================
+// UPDATE LOG MESSAGE COUNTER
+// =====================================
+
+function updateStats(count) {
+
+    document.getElementById("messageCount").textContent =
+        count;
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Singleton Database Manager</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #000;
+            color: white;
+        }
+
+        .container {
+            max-width: 750px;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            background: black;
+        }
+
+        button {
+            padding: 10px 16px;
+            margin: 5px;
+            cursor: pointer;
+            background: #eee;
+            color: #111;
+            border: 1px solid #555;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #ccc;
+        }
+
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            height: 230px;
+            overflow-y: auto;
+            color: white;
+        }
+
+        .message {
+            margin: 8px 0;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .stat-box {
+            width: 50%;
+            color: #ccc;
+        }
+
+        .stat-box h2 {
+            color: white;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h3>University Database Manager</h3>
+
+    <p><b>All modules use one shared database manager.</b></p>
+
+    <button onclick="studentModule()">
+        Student Module
+    </button>
+
+    <button onclick="facultyModule()">
+        Faculty Module
+    </button>
+
+    <button onclick="examModule()">
+        Examination Module
+    </button>
+
+    <div id="output">
+        <b>Database Activity:</b>
+    </div>
+
+    <!-- Statistics Section -->
+
+    <div class="stats">
+
+        <div class="stat-box">
+            Database manager instances created
+            <h2 id="instanceCount">0</h2>
+        </div>
+
+        <div class="stat-box">
+            Database queries executed
+            <h2 id="queryCount">0</h2>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// ========================================
+// SINGLETON DATABASE MANAGER
+// ========================================
+
+const DatabaseManager = (function () {
+
+    // Private variable to store one instance
+
+    let instance;
+
+    // Create database manager
+
+    function createInstance() {
+
+        return {
+
+            // Execute database query
+
+            query: function (sql) {
+
+                display("Executing: " + sql);
+
+                updateQueryCount();
+
+            }
+
+        };
+
+    }
+
+    // Public interface
+
+    return {
+
+        getInstance: function () {
+
+            if (!instance) {
+
+                instance = createInstance();
+
+                display("New Database Manager Created");
+
+                updateInstanceCount();
+
+            } else {
+
+                display("Existing Database Manager Reused");
+
+            }
+
+            return instance;
+
+        }
+
+    };
+
+})();
+
+
+// ========================================
+// COUNTER VARIABLES
+// ========================================
+
+let managerCount = 0;
+
+let totalQueries = 0;
+
+
+// ========================================
+// STUDENT MODULE
+// ========================================
+
+function studentModule() {
+
+    const db = DatabaseManager.getInstance();
+
+    db.query("SELECT * FROM Students");
+
+}
+
+
+// ========================================
+// FACULTY MODULE
+// ========================================
+
+function facultyModule() {
+
+    const db = DatabaseManager.getInstance();
+
+    db.query("SELECT * FROM Faculty");
+
+}
+
+
+// ========================================
+// EXAMINATION MODULE
+// ========================================
+
+function examModule() {
+
+    const db = DatabaseManager.getInstance();
+
+    db.query("SELECT * FROM Exams");
+
+}
+
+
+// ========================================
+// DISPLAY MESSAGES
+// ========================================
+
+function display(message) {
+
+    const output = document.getElementById("output");
+
+    const entry = document.createElement("div");
+
+    entry.className = "message";
+
+    entry.textContent = message;
+
+    output.appendChild(entry);
+
+    output.scrollTop = output.scrollHeight;
+
+}
+
+
+// ========================================
+// UPDATE INSTANCE COUNTER
+// ========================================
+
+function updateInstanceCount() {
+
+    managerCount++;
+
+    document.getElementById("instanceCount").textContent =
+        managerCount;
+
+}
+
+
+// ========================================
+// UPDATE QUERY COUNTER
+// ========================================
+
+function updateQueryCount() {
+
+    totalQueries++;
+
+    document.getElementById("queryCount").textContent =
+        totalQueries;
+
+}
+
+</script>
+
+</body>
+</html>
